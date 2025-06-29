@@ -34,7 +34,7 @@
     - `librosa` - спектральный анализ аудио
     - `numpy`, `scipy` - математические вычисления и синтез эталонов
 
-## Инструкция по запуску
+## Инструкция по запуску и использованию
 > [!note]
 > Система протестирована на версии Python 3.12.9
 >
@@ -90,3 +90,54 @@ python main.py
 ### 7. После завершения упражнения будет выполнен анализ корректности исполнения, и в всплывающем окне будет показан результат.
 > [!IMPORTANT]
 > Анализ при первом запуске упражнения может занять бОльшее время, чем последующие, так как программа создаёт кэш в папке `__pycache__/` для ускорения последующих запусков.
+
+## Инструкция по тестированию отдельных модулей
+### 1. Тестирование MIDI-визуализации
+
+```bash
+python visualizer.py
+```
+Внесите изменения в секцию `if __name__ == "__main__"` для тестирования конкретного случая.
+```python
+# Тестирование модуля
+if __name__ == "__main__":
+    midi_file = "exercises/ёлочка.mid"  # Заменить на реальный путь к MIDI-файлу
+    device_name = 'Realtek High Definition Audio (#1)'  # Заменить на нужное имя устройства
+    # Если задан параметр device_name, то будет использоваться запись звука и производиться оценка исполнения
+    # При enable_sound=True будет использоваться встроенный MIDI-синтезатор для проигрывания нот
+    run_visualization(midi_file, enable_sound=False, device_name=device_name)
+```
+### 2. Тестирование генератора эталонов
+```bash
+python reference_generator.py
+```
+Внесите изменения в секцию `if __name__ == "__main__"` для тестирования конкретного случая.
+```python
+# Тестирование модуля
+if __name__ == "__main__":
+    midi_file = "exercises/ёлочка.mid"  # Заменить на реальный путь к MIDI-файлу
+    output_file = "reference_audio/example_reference.wav" # Заменить на реальный путь сохраняемого аудиофайла
+
+    success = generate_reference_audio(midi_file, output_file)
+
+    if success:
+        print("Эталонный аудиофайл успешно создан!")
+    else:
+        print("Ошибка при создании эталонного аудиофайла.")
+```
+### 3. Тестирование оценщика исполнения
+
+```bash
+python performance_evaluator.py
+```
+Внесите изменения в секцию `if __name__ == "__main__"` для тестирования конкретного случая.
+```python
+# Тестирование модуля
+if __name__ == "__main__":
+    evaluator = PerformanceEvaluator()
+    # Пути к записи и эталону заменить на нужные
+    results = evaluator.evaluate("reference_audio/example_reference.wav", "recorded_audio/example_performance.wav")
+
+    print("DTW Distance:", results['dtw_distance'])
+    print("Similarity Score:", results['similarity'])
+```
