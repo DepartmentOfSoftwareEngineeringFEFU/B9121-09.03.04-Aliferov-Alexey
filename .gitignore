@@ -1,3 +1,6 @@
+recorded_audio/
+reference_audio/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
